@@ -1,0 +1,183 @@
+ion-modal#create-user-modal {
+    --width: fit-content;
+    --max-width: 400px;
+    --height: fit-content;
+    --border-radius: 6px;
+    --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-modal#create-user-modal h1 {
+    margin: 0px 20px 0px 20px;
+}
+
+ion-modal#create-user-modal ion-icon {
+    margin-right: 6px;
+
+    width: 48px;
+    height: 48px;
+
+    padding: 4px 0;
+
+    color: #aaaaaa;
+}
+
+ion-modal#create-user-modal .artwrapper {
+    margin: 10px;
+}
+
+.userwrapper {
+   padding: 15px;
+    justify-content: center;
+    background-color: #212121;
+
+    h1 {
+        font-family: Montserrat;
+        font-weight: 600;
+        font-size: 19px;
+        line-height: 34px;
+        margin: 0px;
+        text-align: left;
+        color: #ebe6e6;
+    }
+
+    p {
+        font-family: Montserrat;
+        font-weight: 100;
+        font-size: 17px;
+        margin: 15px;
+        text-align: center;
+        color: #f1f1f1ba;
+    }
+
+    .okay-btn {
+        position: relative;
+        border-radius: 100px;
+        margin: 17px;
+        width: 121px;
+        height: 31px;
+        display: flex;
+        background-color: #2670b7;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19);
+    
+        p {
+            font-family: Montserrat;
+            font-weight: 600;
+            font-size: 17px;
+            color: white !important;
+        }
+    }
+    
+    .nothanks-btn {
+        position: relative;
+        border-radius: 100px;
+        margin-top: 12px;
+        width: 140px;
+        height: 35px;
+        display: flex;
+      
+        justify-content: center;
+        align-items: center;
+     
+        p {
+            font-family: Montserrat;
+            font-weight: 600;
+            font-size: 18px;
+            color: #0886ffba !important;
+        }
+    }
+    .row {
+        display: flex;
+        justify-content: center;
+    }
+    
+    
+    
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        margin: 0px;
+    
+    }
+
+    .asha-input {
+        width: 100%;
+        display: flex;
+        padding: 0px 19px;
+        flex-direction: column;
+        input {
+            width: 100%;
+            // margin: 10px 5%;
+            background: #FFFFFF 0% 0% no-repeat padding-box;
+            box-shadow: 1px 1px 4px #00000029;
+            border: 1px solid lightgray;
+            border-radius: 15px;
+            padding: 14px 13px;
+            font-size: 20px;
+            color: var(--subtitleColor);
+        }
+    
+        input::placeholder {
+           color: #b6b4b4;
+        }
+    }
+    .asha-select {
+        margin-top: 3px;
+        padding: 0px 19px;
+        ion-select {
+            width: 100%;
+            background: #f5e8d8 0% 0% no-repeat padding-box;
+            /* box-shadow: 1px 1px 4px #00000029; */
+            border: 3px solid #864a04;
+            /* border-radius: 15px; */
+            padding: 7px 8px;
+            font-size: 17px;
+            color: #1a1919 !important;
+        }
+    }
+
+    /* Popover Interface: set color for the popover using Item's CSS variables */
+    .my-custom-interface .select-interface-option {
+        --color: #971e49;
+        --color-hover: #79193b;
+    }
+
+    /* Action Sheet Interface: set color for the action sheet using its button CSS variables */
+    .my-custom-interface .select-interface-option {
+        --button-color: #971e49;
+        --button-color-hover: #79193b;
+    }
+
+    /* Alert Interface: set color for alert options (single selection) */
+    .my-custom-interface .select-interface-option .alert-radio-label {
+        color: #971e49;
+    }
+
+    /* Alert Interface: set color for alert options (multiple selection) */
+    .my-custom-interface .select-interface-option .alert-checkbox-label {
+        color: #971e49;
+    }
+
+    /* Alert Interface: set color for checked alert options (single selection) */
+    .my-custom-interface .select-interface-option[aria-checked=true] .alert-radio-label {
+        color: #79193b;
+    }
+
+    /* Alert Interface: set color for checked alert options (multiple selection) */
+    .my-custom-interface .select-interface-option[aria-checked=true] .alert-checkbox-label {
+        color: #79193b;
+    }
+    
+    .asha-input strong {
+        margin-left: 6%;
+        margin-top: 10px;
+    }
+
+    
+}

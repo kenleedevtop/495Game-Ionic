@@ -1,0 +1,161 @@
+.readyPage {
+    background-color: rgb(17, 17, 17);
+
+    .container {
+        display: flex;
+        width: 100%;
+    }
+
+    .content {
+        height: 100vh;
+        background: #000000;
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    ion-content {
+        --overflow: hidden
+    }
+
+    .page-content {
+        padding-top: 20px;
+    }
+
+    .color1 {
+        --background: #c83a1f;
+        --background-hover: #c83a1f;
+        --background-activated: #d95e45;
+        --background-focused: #d6aba3;
+    }
+
+    .color2 {
+        --background: #dfa547;
+        --background-hover: #dfa547;
+        --background-activated: #f6c57c;
+        --background-focused: #e7be7b;
+    }
+
+    .color3 {
+        --background: #dd5a0a;
+        --background-hover: #dd5a0a;
+        --background-activated: #f89c62;
+        --background-focused: #f5b085;
+    }
+
+    .btn-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        min-width: 175px;
+        align-items: center;
+
+        .logo {
+            width: 153px
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .title-container {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+    }
+
+    ion-button {
+        width: 134px;
+        height: 32px;
+        --color: white;
+        --border-radius: 100px;
+        --box-shadow: 0 1px 4px 0 rgba(227, 227, 227, 1), 0 1px 5px 0 rgba(255, 255, 255, 0.89);
+
+        p {
+            font-weight: 600;
+            margin: 0px;
+            font-size: 16px;
+            white-space: pre;
+            line-height: 12px;
+        }
+    }
+
+    .start-button {
+        position: relative;
+        border-radius: 100px;
+        margin: 0px;
+        width: 134px;
+        line-height: 9px;
+        height: 37px;
+        padding: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 1px 4px 0 rgba(227, 227, 227, 1), 0 1px 5px 0 rgba(255, 255, 255, 0.89);
+
+    }
+
+    .title {
+        font-size: 41px;
+        margin: auto;
+        color: #7c0101;
+        /* -webkit-text-stroke: 1px #fefe00; */
+        text-shadow: #fc0 1px 0 10px;
+        letter-spacing: 6px;
+        font-weight: 600;
+        font-family: Moms_typewriter;
+    }
+
+    .room-container {
+
+        width: 90%;
+        padding: 20px;
+
+        .room-item-title {
+            // background-color: #bf7010;
+            // border: solid 1px #504d49;
+            color: #ffffff;
+            font-family: Montserrat;
+        }
+
+        .item-container {
+            height: calc(100vh - 80px);
+            overflow: auto;
+
+            .room-item-odd {
+                background-color: #a45c03;
+                color: #ffffff;
+                font-family: Montserrat;
+            }
+            .room-item {
+                // background-color: #ce8d3e;
+                color: #ffffff;
+                font-family: Montserrat;
+            }
+
+            .active-room-item {
+                background-color: #663a05;
+                color: #ffffff;
+                font-family: Montserrat;
+            }
+        }
+    }
+
+    ion-col {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        // border: solid 1px #504d49;
+    }
+
+}

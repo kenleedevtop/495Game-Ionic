@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'Moms_typewriter';
+    src: url('./assets/font/MomsTypewriter/Mom«t___.ttf');
+    font-weight: 600;
+    font-style: bold;
+}
+
+@font-face {
+    font-family: 'Playfair_display';
+    src: url('./assets/font/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf');
+    font-weight: 100;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Playfair_display';
+    src: url('./assets/font/playfair-display/PlayfairDisplay-Bold.ttf');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('./assets/font/Montserrat/Montserrat-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('./assets/font/Montserrat/Montserrat-Bold.ttf');
+    font-weight: 600;
+    font-style: normal;
+}
