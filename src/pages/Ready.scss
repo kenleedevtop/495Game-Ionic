@@ -136,6 +136,7 @@
                 color: #ffffff;
                 font-family: Montserrat;
             }
+
             .room-item {
                 // background-color: #ce8d3e;
                 color: #ffffff;
@@ -156,6 +157,11 @@
         justify-content: center;
         text-align: center;
         // border: solid 1px #504d49;
+    }
+
+    ion-alert {
+        --backdrop-opacity: 0.7;
+        --background: black
     }
 
 }
