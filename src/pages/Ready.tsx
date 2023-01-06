@@ -49,8 +49,8 @@ const Ready: React.FC<ContainerProps> = ({ socket, id , room}) => {
 
 
   const handleBack = () => {
-    socket.current.emit('join_lobby');
     socket.current.emit('leave_room', {name: id, room});
+    socket.current.emit('join_lobby');
     setReady(false);
     history.push("/lobby")
   }

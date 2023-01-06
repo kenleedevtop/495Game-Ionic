@@ -28,8 +28,11 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
       const roms: any = []
       const romnames: any = [];
       Object.keys(room_list).forEach(function(key, index) {
-        roms.push(room_list[key]);
-        romnames.push(key);
+        const currentroom = room_list[key]
+        if (currentroom['maxMembers'] > currentroom['currentMembers']) {
+          roms.push(room_list[key]);
+          romnames.push(key);
+        }
       });
       setRooms(roms);
       setRoomNames(romnames);
@@ -55,9 +58,6 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
     <IonPage className='lobbyPage'>
       <IonContent >
         <IonRow className='content'>
-          {/* <div className='title-container'>
-            <p className='title'>49O</p>
-          </div> */}
           <div className='container'>
             <div className='room-container'>
               <IonGrid >
