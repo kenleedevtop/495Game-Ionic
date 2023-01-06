@@ -1,9 +1,17 @@
 import { IonButton, IonContent, IonPage, IonRow } from '@ionic/react';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { useHistory } from 'react-router';
 import './Over.scss';
 
-const Over: React.FC = () => {
+interface ContainerProps {
+  socket: any;
+  id: any;
+  name: any;
+  setName: any;
+  room: any;
+  setRoom: any;
+}
+const Over: React.FC<ContainerProps> = ({socket}) => {
   const history = useHistory();
 
   const handleLobby = () => {

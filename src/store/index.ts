@@ -1,1 +1,1 @@
-export { default as JourneyStore } from "./AppStore";
+export { default as AppStore } from "./AppStore";

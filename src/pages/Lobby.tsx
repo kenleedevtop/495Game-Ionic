@@ -1,13 +1,43 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow } from '@ionic/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import './Lobby.scss';
 
-const Lobby: React.FC = () => {
+interface ContainerProps {
+  socket: any;
+  id: any;
+  name: any;
+  setName: any;
+  room: any;
+  setRoom: any;
+}
+
+const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
   const history = useHistory();
-  const [selectedRoom, setSelectedRoom] = useState("");
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [roomNames, setRoomNames] = useState<string[]>([])
+
+  useEffect(() => {
+    socket.current.emit('join_lobby');
+  }, [])
+
+  useEffect(() => {
+     // @ts-ignore
+    socket.current.on("room_list", (room_list) => {
+      const roms: any = []
+      const romnames: any = [];
+      Object.keys(room_list).forEach(function(key, index) {
+        roms.push(room_list[key]);
+        romnames.push(key);
+      });
+      setRooms(roms);
+      setRoomNames(romnames);
+    });
+    // @ts-ignore
+  }, [socket.current]);
 
   const handleJoin = () => {
+    socket.current.emit('join_room', { room, name: id, member: 8 });
     history.push("/ready")
   }
 
@@ -15,11 +45,10 @@ const Lobby: React.FC = () => {
     history.push("/home")
   }
 
-  const handleSelectRoom = (room: any) => {
-    setSelectedRoom(room);
+  const handleSelectRoom = (room: any, index: any) => {
+    setRoom(room);
+    setRoom(rooms[index]);
   }
-
-  const rooms = ["World of Star", "Strong Man", "Powerful Team", "Friend of Me", "Combat Team", "World of Star1", "Strong Man1", "Powerful Team1", "Friend of Me1", "Combat Team1", "World of Star2", "Strong Man2", "Powerful Team2", "Friend of Me2", "Combat Team2", "World of Star12", "Strong Man12", "Powerful Team12", "Friend of Me12", "Combat Team12"]
 
   return (
     <IonPage className='lobbyPage'>
@@ -41,9 +70,9 @@ const Lobby: React.FC = () => {
 
               <IonGrid className='item-container'>
                 {
-                  rooms.map((room: any, index: any) => {
+                  roomNames.map((roomitem: any, index: any) => {
                     let classname = "room-item"
-                    if (room === selectedRoom) {
+                    if (roomitem === room) {
                       classname = "active-room-item"
                     } else {
                       if (index % 2 === 0) {
@@ -53,10 +82,10 @@ const Lobby: React.FC = () => {
                       }
                     }
                     return (
-                      <IonRow className={classname} onClick={() => handleSelectRoom(room)}>
-                        <IonCol>{room}</IonCol>
+                      <IonRow key={index} className={classname} onClick={() => handleSelectRoom(roomitem, index)}>
+                        <IonCol>{roomitem}</IonCol>
                         <IonCol size="auto">
-                          <div style={{ width: "150px" }}>8</div>
+                          <div style={{ width: "150px" }}>{rooms[index].maxMembers}</div>
                         </IonCol>
                       </IonRow>
                     )
@@ -69,7 +98,7 @@ const Lobby: React.FC = () => {
                 <img src="/assets/icon/icon.png" alt="light" />
               </div>
               <div className='button-container'>
-                <IonButton disabled={selectedRoom === ""} className='color2' onClick={handleJoin}><p>JOIN</p></IonButton>
+                <IonButton disabled={room === ""} className='color2' onClick={handleJoin}><p>JOIN</p></IonButton>
                 <IonButton className='color3' onClick={handleBack}><p>HOME</p></IonButton>
               </div>
             </div>

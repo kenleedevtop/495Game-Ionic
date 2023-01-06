@@ -4,11 +4,18 @@ import { useHistory } from 'react-router';
 import CreateRoomModal from '../components/CreateRoomModal';
 import './Home.scss';
 
-const Home: React.FC = () => {
+interface ContainerProps {
+  socket: any;
+  setRoom: any;
+  id: any
+}
+
+const Home: React.FC<ContainerProps> = ({socket, setRoom, id}) => {
   const [showRoomModal, setShowRoomModal] = useState<boolean>(false);
   const history = useHistory();
 
   const handleLobby = () => {
+    socket.current.emit('join_lobby');
     history.push('/lobby')
   }
 
@@ -45,6 +52,9 @@ const Home: React.FC = () => {
       </IonContent>
       <CreateRoomModal
         showModal={showRoomModal}
+        socket={socket}
+        setRoom={setRoom}
+        id={id}
         dismiss={handleHideRoomModal}
       />
     </IonPage>

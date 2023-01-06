@@ -4,9 +4,19 @@ import { useHistory } from 'react-router';
 import TextInput from '../components/TextInput';
 import './Game.scss';
 
-const Game: React.FC = () => {
+interface ContainerProps {
+  socket: any;
+  id: any;
+  name: any;
+  setName: any;
+  room: any;
+  setRoom: any;
+}
+
+const Game: React.FC<ContainerProps> = ({socket}) => {
   const [roll, setRoll] = useState<any>(0);
   const [factor, setFactor] = useState<any>(0);
+  // eslint-disable-next-line
   const [activename, setActiveName] = useState<string>("TOM");
   const [value, setValue] = useState<number>(490);
   const [realValue, setRealValue] = useState<string>("49O")

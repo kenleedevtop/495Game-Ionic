@@ -1,19 +1,53 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow } from '@ionic/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import TextInput from '../components/TextInput';
 import './Ready.scss';
 
+interface ContainerProps {
+  socket: any;
+  id: any;
+  name: any;
+  setName: any;
+  room: any;
+  setRoom: any;
+}
 
-const Ready: React.FC = () => {
+const Ready: React.FC<ContainerProps> = ({ socket, id , room}) => {
   const history = useHistory();
   const [nickname, setNickName] = useState<string>("");
+  const [start, setStart] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [playerCount, setPlayerCount] = useState(0);
+  const [players, setPlayers] = useState<any[]>([]);
+
+  useEffect(() => {
+    // @ts-ignore
+    socket.current.on("player_names", (names) => {
+      setPlayers(names);
+    });
+    // @ts-ignore
+    socket.current.on("max_member", (count) => {
+      setPlayerCount(count);
+    });
+    socket.current.on("start_game", () => {
+      setStart(true);
+    });
+    // @ts-ignore
+  }, [socket.current]);
 
   const handleStart = () => {
     history.push('/game')
   }
 
+  const handleReady = () => {
+    setReady(true);
+  }
+
+
   const handleBack = () => {
+    socket.current.emit('join_lobby');
+    socket.current.emit('leave_room', {name: id, room});
     history.push("/lobby")
   }
 
@@ -21,9 +55,6 @@ const Ready: React.FC = () => {
     const value = event.target.value;
     setNickName(value);
   }
- 
-
-  const players = ["JOHN", "TOM", "JERRY", "CHRIS", "GINA", "STAR", "WOLF", "DOG"]
 
   return (
     <IonPage className='readyPage'>
@@ -35,29 +66,40 @@ const Ready: React.FC = () => {
                 <IonRow className='room-item-title'>
                   <IonCol>NUMBER OF PLAYERS</IonCol>
                   <IonCol size="auto">
-                    <div style={{ width: "261px" }}>8</div>
+                    <div style={{ width: "261px" }}>{playerCount}</div>
                   </IonCol>
                 </IonRow>
               </IonGrid>
 
               <IonGrid className='item-container'>
                 {
-                  players.map((room: any, index: any) => {
-                    return (
-                      <IonRow className='room-item'>
-                        <IonCol>PLAYER {index + 1}</IonCol>
-                        <IonCol size="auto">
-                          <TextInput
-                            elemenName='roomname'
-                            labelStr=''
-                            type='text'
-                            placeholder="NickName"
-                            value={nickname}
-                            onChange={handleNickname}
-                          />
-                        </IonCol>
-                      </IonRow>
-                    )
+                  players.map((item: any, index: any) => {
+                    if (item.id === id) {
+                      return (
+                        <IonRow className='room-item' key={index}>
+                          <IonCol>PLAYER {index + 1}</IonCol>
+                          <IonCol size="auto">
+                            <TextInput
+                              elemenName='roomname'
+                              labelStr=''
+                              type='text'
+                              placeholder="NickName"
+                              value={nickname}
+                              onChange={handleNickname}
+                            />
+                          </IonCol>
+                        </IonRow>
+                      )
+                    } else {
+                      return (
+                        <IonRow className='room-item' key={index}>
+                          <IonCol>PLAYER {index + 1}</IonCol>
+                          <IonCol size="auto">
+                            <div style={{ width: "261px" }}>{item.nickname ? item.nickname : "Not Ready"}</div>
+                          </IonCol>
+                        </IonRow>
+                      )
+                    }
                   })
                 }
               </IonGrid>
@@ -67,7 +109,12 @@ const Ready: React.FC = () => {
                 <img src="/assets/icon/icon.png" alt="light" />
               </div>
               <div className='button-container'>
-                <IonButton disabled={nickname === ""} className='color2' onClick={handleStart}><p>START</p></IonButton>
+                {
+                  !ready ? 
+                  <IonButton disabled={nickname === ""} className='color2' onClick={handleReady}><p>READY</p></IonButton>
+                  :
+                  <IonButton  className='color2' onClick={handleStart}><p>START</p></IonButton>
+                }
                 <IonButton className='color3' onClick={handleBack}><p>LOBBY</p></IonButton>
               </div>
             </div>

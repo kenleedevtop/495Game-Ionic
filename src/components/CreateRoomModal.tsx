@@ -5,16 +5,22 @@ import {
 
 import './CreateRoomModal.scss';
 import Input from './TextInput';
+import { useHistory } from 'react-router';
+import { makeRandom } from '../utils';
 // import { Preferences } from '@capacitor/preferences';
 
 interface ContainerProps {
     showModal: boolean;
     dismiss: any;
+    socket: any;
+    setRoom: any;
+    id: any;
 }
 
-const CreateRoomModal: React.FC<ContainerProps> = ({ showModal, dismiss }) => {
+const CreateRoomModal: React.FC<ContainerProps> = ({ showModal, dismiss, socket,setRoom, id }) => {
     const [roomname, setRoomName] = useState<string>("")
     const [members, setMembers] = useState<number>(2);
+    const history = useHistory();
     const handleContinue = () => {
         dismiss();
     }
@@ -34,21 +40,14 @@ const CreateRoomModal: React.FC<ContainerProps> = ({ showModal, dismiss }) => {
     };
 
 
+
+
     const handleCreateRoom = async () => {
         if (members && roomname) {
-            // const body = {
-            //     members: members,
-            //     roomname: roomname
-            // }
-            // signUp(body)
-            //     .then(async (res) => {
-            //         await Preferences.remove({ key: 'createdUser' });
-            //         await Preferences.set({ key: 'createdUser', value: "true" });
-            //         dismiss();
-            //     })
-            //     .catch((err) => {
-            //         dismiss();
-            //     })
+            setRoom(roomname)
+            socket.current.emit('join_room', { room: roomname, id, members });
+            history.push("/ready")
+            dismiss();
         } else {
 
         }
