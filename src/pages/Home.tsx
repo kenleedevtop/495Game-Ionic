@@ -45,7 +45,7 @@ const Home: React.FC<ContainerProps> = ({socket, setRoom, id}) => {
             <div className='button-container'>
               <IonButton className='color2' onClick={handleShowRoomModal}><p>NEW</p></IonButton>
               <IonButton className='color2' onClick={handleLobby}><p>LOBBY</p></IonButton>
-              <IonButton className='color3' onClick={handleExit}><p>EXIT</p></IonButton>
+              <IonButton className='color3' onClick={handleExit}><p>QUIT</p></IonButton>
             </div>
           </div>
         </IonRow>

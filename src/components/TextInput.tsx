@@ -7,6 +7,7 @@ interface InputProps {
     labelStr?: string;
     placeholder: string;
     value?: string;
+    disable?: boolean;
     type: string;
     onChange: (event: React.FormEvent<HTMLInputElement>) => void;
 }
@@ -16,6 +17,7 @@ const TextInput: FC<InputProps> = (props) => {
         elemenName = "",
         labelStr,
         type,
+        disable,
         placeholder,
         value = "",
         onChange
@@ -30,6 +32,7 @@ const TextInput: FC<InputProps> = (props) => {
                 name={elemenName}
                 autoComplete="off"
                 type={type}
+                disabled={disable}
                 placeholder={placeholder}
                 value={value}
                 onChange={(e: React.FormEvent<HTMLInputElement>) => onChange(e)}

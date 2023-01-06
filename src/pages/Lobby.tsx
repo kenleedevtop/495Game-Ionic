@@ -19,6 +19,7 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
 
   useEffect(() => {
     socket.current.emit('join_lobby');
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
       setRoomNames(romnames);
     });
     // @ts-ignore
+    // eslint-disable-next-line
   }, [socket.current]);
 
   const handleJoin = () => {
@@ -45,9 +47,8 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
     history.push("/home")
   }
 
-  const handleSelectRoom = (room: any, index: any) => {
+  const handleSelectRoom = (room: any) => {
     setRoom(room);
-    setRoom(rooms[index]);
   }
 
   return (
@@ -82,7 +83,7 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
                       }
                     }
                     return (
-                      <IonRow key={index} className={classname} onClick={() => handleSelectRoom(roomitem, index)}>
+                      <IonRow key={index} className={classname} onClick={() => handleSelectRoom(roomitem)}>
                         <IonCol>{roomitem}</IonCol>
                         <IonCol size="auto">
                           <div style={{ width: "150px" }}>{rooms[index].maxMembers}</div>

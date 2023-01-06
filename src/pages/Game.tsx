@@ -44,6 +44,10 @@ const Game: React.FC<ContainerProps> = ({socket}) => {
 
   }
 
+  const handleExit = () => {
+    history.push('/lobby')
+  }
+
   const handleRoll = (event: any) => {
     const value = event.target.value;
     setRoll(value);
@@ -115,6 +119,7 @@ const Game: React.FC<ContainerProps> = ({socket}) => {
             <div className='button-container'>
               <IonButton className='color2' onClick={handleForgive}><p>FORGIVE(-)</p></IonButton>
               <IonButton className='color3' onClick={handleTransgress}><p>TRANSGRESS(+)</p></IonButton>
+              <IonButton className='color1' onClick={handleExit}><p>EXIT</p></IonButton>
             </div>
           </div>
         </IonRow>

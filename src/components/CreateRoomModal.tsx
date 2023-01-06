@@ -6,8 +6,6 @@ import {
 import './CreateRoomModal.scss';
 import Input from './TextInput';
 import { useHistory } from 'react-router';
-import { makeRandom } from '../utils';
-// import { Preferences } from '@capacitor/preferences';
 
 interface ContainerProps {
     showModal: boolean;
@@ -39,13 +37,10 @@ const CreateRoomModal: React.FC<ContainerProps> = ({ showModal, dismiss, socket,
         cssClass: 'my-custom-interface'
     };
 
-
-
-
     const handleCreateRoom = async () => {
         if (members && roomname) {
             setRoom(roomname)
-            socket.current.emit('join_room', { room: roomname, id, members });
+            socket.current.emit('join_room', { room: roomname, name: id, members });
             history.push("/ready")
             dismiss();
         } else {

@@ -16,6 +16,7 @@ interface ContainerProps {
 const Ready: React.FC<ContainerProps> = ({ socket, id , room}) => {
   const history = useHistory();
   const [nickname, setNickName] = useState<string>("");
+  // eslint-disable-next-line
   const [start, setStart] = useState(false);
   const [ready, setReady] = useState(false);
   const [playerCount, setPlayerCount] = useState(0);
@@ -34,6 +35,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id , room}) => {
       setStart(true);
     });
     // @ts-ignore
+    // eslint-disable-next-line 
   }, [socket.current]);
 
   const handleStart = () => {
@@ -41,6 +43,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id , room}) => {
   }
 
   const handleReady = () => {
+    socket.current.emit('ready', {room, id, nickname});
     setReady(true);
   }
 
@@ -48,6 +51,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id , room}) => {
   const handleBack = () => {
     socket.current.emit('join_lobby');
     socket.current.emit('leave_room', {name: id, room});
+    setReady(false);
     history.push("/lobby")
   }
 
@@ -82,6 +86,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id , room}) => {
                             <TextInput
                               elemenName='roomname'
                               labelStr=''
+                              disable={ready}
                               type='text'
                               placeholder="NickName"
                               value={nickname}
