@@ -35,7 +35,8 @@ import { useEffect, useRef, useState } from 'react';
 import { makeRandom } from './utils';
 setupIonicReact();
 
-const CONNECTION = process.env.REACT_APP_ENV === 'prod' ? process.env.REACT_APP_WS_PROD_URL : process.env.REACT_APP_WS_DEV_URL
+// const CONNECTION = process.env.REACT_APP_ENV === 'prod' ? process.env.REACT_APP_WS_PROD_URL : process.env.REACT_APP_WS_DEV_URL
+const CONNECTION = "ws://52.196.79.123"
 
 const App: React.FC = () => {
   const [id, setId] = useState("");
