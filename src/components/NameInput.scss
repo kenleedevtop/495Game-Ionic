@@ -1,0 +1,27 @@
+.cdxc-input {
+    width: 100%;
+    display: flex;
+    padding: 0px 19px;
+    flex-direction: column;
+    input {
+        width: 100%;
+        background: #f5e8d8 0% 0% no-repeat padding-box;
+        /* box-shadow: 1px 1px 4px #00000029; */
+        border: 3px solid #864a04;
+        /* border-radius: 15px; */
+        padding: 7px 8px;
+        font-size: 17px;
+        color: #1a1919 !important;
+    }
+
+    input::placeholder {
+       color: #b6b4b4
+    }
+}
+
+.cdxc-input strong {
+    margin-left: 6%;
+    margin-top: 10px;
+}
+
+

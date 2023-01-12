@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import TextInput from '../components/TextInput';
 import './Game.scss';
+import EditScoreModal from '../components/EditScoreModal';
 
 interface ContainerProps {
   socket: any;
@@ -10,40 +11,62 @@ interface ContainerProps {
   name: any;
   setName: any;
   room: any;
+  admin: any;
   setRoom: any;
 }
 
-const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
+const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) => {
   const [roll, setRoll] = useState<any>(0);
   const [factor, setFactor] = useState<any>(0);
-  const [selectedPlayer, setSelectPlayer] = useState<string>("");
+  const [selectedPlayers, setSelectPlayers] = useState<any[]>([]);
   const [value, setValue] = useState<number>(490);
   const [realValue, setRealValue] = useState<string>("49O")
   const [showAlert, setShowAlert] = useState(false);
+  const [showRoomModal, setShowRoomModal] = useState<boolean>(false);
 
   const [players, setPlayers] = useState([]);
   const [playerDebts, setPlayerDebts] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("");
   const [myTurn, setMyTurn] = useState(false);
 
+  const [endGame, setEndGame] = useState(true);
+  const [endGameRoom, setEndGameRoom] = useState<any>(null);
+
+  const [successed, setSuccessed] = useState(false);
+
   const [presentToast] = useIonToast();
 
   const history = useHistory();
+
+  const handleShowRoomModal = () => {
+    setShowRoomModal(true);
+  }
+
+  const handleHideRoomModal = () => {
+    setShowRoomModal(false);
+  }
+
 
   useEffect(() => {
     // @ts-ignore
     socket.current.on("game_players", (players) => {
       setPlayers(players);
     });
+
     // @ts-ignore
     socket.current.on("player_debts", (debts) => {
       const myDebt = debts.filter((item: any) => item.id === id);
-      setValue(myDebt[0].debt);
-      let strValue = myDebt[0].debt.toString();
-      strValue = strValue.replace(/0/g, 'O');
-      strValue = strValue.replace(/1/g, 'l');
-      setRealValue(strValue);
-      setPlayerDebts(debts);
+      if (myDebt.length > 0) {
+        setValue(myDebt[0].debt);
+        let strValue = myDebt[0].debt.toString();
+        strValue = strValue.replace(/0/g, 'O');
+        strValue = strValue.replace(/1/g, 'l');
+        setRealValue(strValue);
+        setPlayerDebts(debts);
+        if (myDebt[0].debt <= 0) {
+          setSuccessed(true);
+        }
+      }
     });
 
     // @ts-ignore
@@ -63,16 +86,55 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
     });
 
     // @ts-ignore
-    socket.current.on("forgive", (newid, amount, players) => {
+    socket.current.on("forgive_self", (newid, amount, players) => {
       let Prefix = "";
       if (newid === id) {
         Prefix = "You"
       } else {
-        const player = players.filter((item: any) => item.id === newid);
+        const player = players.filter((player: any) => player.id === newid);
         Prefix = player[0].nickname
       }
       presentToast({
-        message: `${Prefix} forgived ${amount} of debts`,
+        message: `${Prefix} forgave ${amount} debts`,
+        duration: 3000
+      })
+    });
+
+    // @ts-ignore
+    socket.current.on("success_game", (name, nickname) => {
+      let Prefix = "";
+      if (name === id) {
+        Prefix = "You"
+      } else {
+        Prefix = nickname
+      }
+      presentToast({
+        message: `${Prefix} forgave All debts`,
+        duration: 3000
+      })
+    });
+
+    // @ts-ignore
+    socket.current.on("forgive", (from, ids, amount, players) => {
+      let Subfix = "";
+      const names = ids.map((item: any) => {
+        let Prefix = "";
+        const player = players.filter((player: any) => player.id === item);
+        if (player.length > 0) {
+          Prefix = player[0].nickname
+        } else {
+          console.log(item, players)
+        }
+        return Prefix;
+      });
+      if (from === id) {
+        Subfix = "You"
+      } else {
+        const player = players.filter((player: any) => player.id === from);
+        Subfix = player[0].nickname
+      }
+      presentToast({
+        message: `"${Subfix}" reduced ${amount} from "${names.toString()}"\`s debts-to-forgive`,
         duration: 3000
       })
     });
@@ -86,38 +148,71 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
     });
 
     // @ts-ignore
-    socket.current.on("transgress", (from, to, amount, players) => {
-      let Prefix = "";
+    socket.current.on("transgress", (from, ids, amount, players) => {
       let Subfix = "";
-      if (to === id) {
-        Prefix = "You"
-      } else {
-        const player = players.filter((item: any) => item.id === to);
+      const names = ids.map((item: any) => {
+        let Prefix = "";
+        const player = players.filter((player: any) => player.id === item);
         Prefix = player[0].nickname
-      }
+        return Prefix;
+      });
       if (from === id) {
         Subfix = "You"
       } else {
-        const player = players.filter((item: any) => item.id === to);
-        Subfix = player[0].nickname
+        const player = players.filter((player: any) => player.id === from);
+        if (player.length > 0) {
+          Subfix = player[0].nickname
+        }
       }
       presentToast({
-        message: `${Subfix} transgressed ${amount} of debts to ${Prefix}`,
+        message: `"${Subfix}" added ${amount} to "${names.toString()}"\`s debts-to-forgive`,
+        duration: 3000
+      })
+    });
+
+     // @ts-ignore
+     socket.current.on("edit-score", (ids, amount, players) => {
+      presentToast({
+        message: `Admin changed scores`,
         duration: 3000
       })
     });
 
     // @ts-ignore
-    socket.current.on("end_game", (message) => {
-      presentToast({
-        message: message,
-        duration: 3000
-      })
-      // history.push('/lobby')
-      setRoom("");
+    socket.current.on("end_game", (room) => {
+      setEndGameRoom(room);
+      setEndGame(true);
     });
     //eslint-disable-next-line
   }, [socket.current])
+
+  useEffect(() => {
+    if (endGame) {
+      if (room === endGameRoom) {
+        presentToast({
+          message: `The Admin has closed this game.`,
+          duration: 3000
+        })
+        setEndGameRoom(null);
+        setEndGame(false);
+        history.push('/ready')
+      } else {
+        setEndGameRoom(null);
+        setEndGame(false);
+      }
+    }
+    // eslint-disable-next-line 
+  }, [endGame, endGameRoom])
+
+  useEffect(() => {
+    if (successed) {
+      setSuccessed(false);
+      socket.current.emit('success_game', { name: id, room });
+      history.push('/over')
+    }
+    // eslint-disable-next-line 
+  }, [successed])
+
 
   const handleForgive = () => {
     const sum = parseInt(roll) * parseInt(factor);
@@ -125,20 +220,42 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
     if (subValue <= 0) {
       subValue = 0;
     }
-    socket.current.emit("forgive", { id, room, amount: sum, debt: subValue });
+    socket.current.emit("forgive_self", { id, room, amount: sum, debt: subValue });
     socket.current.emit("turn_over", { room });
-    if (subValue === 0) {
-      socket.current.emit('success_game', { name: id, room });
-      history.push('/over')
+  }
+
+
+  const handleReduceTransgress = () => {
+    if (selectedPlayers.length > 0) {
+      const sum = parseInt(roll) * parseInt(factor);
+      const debts = selectedPlayers.map((player) => {
+        const othervalue: any = playerDebts.filter((item: any) => item.id === player)
+        let subValue = othervalue[0].debt - sum;
+        if (subValue <= 0) {
+          subValue = 0;
+        }
+        return subValue;
+      })
+      socket.current.emit("forgive", { from: id, ids: selectedPlayers, room, amount: sum, debts });
+      socket.current.emit("turn_over", { room });
+      // if (subValue === 0) {
+      //   socket.current.emit('success_game', { name: id, room });
+      //   history.push('/over')
+      // }
+    } else {
+      setShowAlert(true)
     }
   }
 
-  const handleTransgress = () => {
-    if (selectedPlayer) {
+  const handleAddTransgress = () => {
+    if (selectedPlayers.length > 0) {
       const sum = parseInt(roll) * parseInt(factor);
-      const othervalue: any = playerDebts.filter((item: any) => item.id === selectedPlayer)
-      let subValue = othervalue[0].debt + sum;
-      socket.current.emit("transgress", { from: id, to: selectedPlayer, room, amount: sum, debt: subValue });
+      const debts = selectedPlayers.map((player) => {
+        const othervalue: any = playerDebts.filter((item: any) => item.id === player)
+        let subValue = othervalue[0].debt + sum;
+        return subValue;
+      })
+      socket.current.emit("transgress", { from: id, ids: selectedPlayers, room, amount: sum, debts });
       socket.current.emit("turn_over", { room });
     } else {
       setShowAlert(true)
@@ -146,10 +263,14 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
   }
 
   const handleExit = () => {
-    socket.current.emit('leave_game', { name: id, room });
-    socket.current.emit('join_lobby');
-    setRoom("");
-    history.push('/lobby')
+    if (admin === id) {
+      socket.current.emit('end_game', { room });
+    } else {
+      socket.current.emit('leave_room', { name: id, room });
+      socket.current.emit('join_lobby');
+      setRoom("");
+      history.push('/lobby')
+    }
   }
 
   const handleRoll = (event: any) => {
@@ -162,8 +283,16 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
     setFactor(value);
   }
 
-  const handleSelectPlayer = (id: any) => {
-    setSelectPlayer(id);
+  const handleSelectPlayer = (selectedid: any) => {
+    let tempplayers = selectedPlayers;
+    if (tempplayers.includes(selectedid)) {
+      tempplayers = tempplayers.filter((item) => item !== selectedid);
+    } else {
+      if (id !== selectedid) {
+        tempplayers.push(selectedid);
+      }
+    }
+    setSelectPlayers(() => [...tempplayers]);
   }
 
   return (
@@ -172,12 +301,18 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
         <div className='yourname'>
           {currentTurn}
         </div>
+        {
+          id === admin &&
+          <div className='allscore'>
+            <IonButton className='color4' onClick={handleShowRoomModal}><p>All Score</p></IonButton>
+          </div>
+        }
         <IonRow className='content'>
           <IonGrid className='item-container'>
             {
               players.map((item: any, index: any) => {
                 let classname = "room-item"
-                if (item.id === selectedPlayer) {
+                if (selectedPlayers.includes(item.id)) {
                   classname = "active-room-item"
                 } else {
                   classname = "room-item"
@@ -237,7 +372,8 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
             </div>
             <div className='button-container'>
               <IonButton className='color2' disabled={!myTurn} onClick={handleForgive}><p>FORGIVE(-)</p></IonButton>
-              <IonButton className='color3' disabled={!myTurn} onClick={handleTransgress}><p>TRANSGRESS(+)</p></IonButton>
+              <IonButton className='color3' disabled={!myTurn} onClick={handleAddTransgress}><p>TRANSGRESS(+)</p></IonButton>
+              <IonButton className='color3' disabled={!myTurn} onClick={handleReduceTransgress}><p>TRANSGRESS(-)</p></IonButton>
               <IonButton className='color1' onClick={handleExit}><p>EXIT</p></IonButton>
             </div>
           </div>
@@ -249,6 +385,16 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
           duration={3000}
           message="You should select the other Player for transgress"
           buttons={['OK']}
+        />
+        <EditScoreModal
+          showModal={showRoomModal}
+          socket={socket}
+          setRoom={setRoom}
+          id={id}
+          room={room}
+          players={players}
+          playerDebts={playerDebts}
+          dismiss={handleHideRoomModal}
         />
       </IonContent>
     </IonPage>

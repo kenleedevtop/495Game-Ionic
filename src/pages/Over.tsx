@@ -11,13 +11,15 @@ interface ContainerProps {
   room: any;
   setRoom: any;
 }
-const Over: React.FC<ContainerProps> = ({socket}) => {
+const Over: React.FC<ContainerProps> = ({ socket, id, room, setRoom }) => {
   const history = useHistory();
 
   const handleLobby = () => {
   }
 
   const handleExit = () => {
+    socket.current.emit('leave_room', { name: id, room });
+    setRoom("");
     history.push('/home')
   }
 

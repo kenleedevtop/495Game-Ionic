@@ -1,7 +1,7 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow, IonToast, useIonAlert, useIonToast } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import TextInput from '../components/TextInput';
+import TextInput from '../components/NameInput';
 import './Ready.scss';
 
 interface ContainerProps {
@@ -150,7 +150,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
     if (gameStarted) {
       if (room === startedRoom) {
         presentToast({
-          message: `The game in the room "${startedRoom}" has been started`,
+          message: `The game has been started`,
           duration: 3000
         })
         handleJoin(readyPlayers);

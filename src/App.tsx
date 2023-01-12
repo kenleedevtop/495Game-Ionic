@@ -98,6 +98,7 @@ const App: React.FC = () => {
               setName={setName}
               room={room}
               setRoom={setRoom}
+              admin={admin}
               socket={socket} />
           </Route>
           <Route path="/over" exact={true}>
