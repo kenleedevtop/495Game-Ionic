@@ -34,49 +34,25 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
   const [startedRoom, setStartedRoom] = useState<any>(null);
   const [readyPlayers, setReadyPlayers] = useState<any>([]);
 
-  let sockettime = 0;
+  const [requested, setRequested] = useState<boolean>(false);
+  const [requester, setRequester] = useState<any>(null);
 
 
-  const handleApproveJoin = (name: any, socketid: any) => {
-    socket.current.emit('response_join_room', { room, name, approve: true, socketid });
-    sockettime=0
+  const handleApproveJoin = (name: any) => {
+    socket.current.emit('response_join_room', { room, name, approve: true });
+    setRequester(null)
   }
 
-  const handleDeniJoin = (name: any, socketid: any) => {
-    socket.current.emit('response_join_room', { room, name, approve: false, socketid });
-    sockettime=0
+  const handleDeniJoin = (name: any) => {
+    socket.current.emit('response_join_room', { room, name, approve: false });
+    setRequester(null)
   }
 
   useEffect(() => {
     // @ts-ignore
-    socket.current.on("request_join_room", (name, socketid) => {
-      if (admin === id) {
-        sockettime ++;
-        if (sockettime === 1) {
-          presentAlert({
-            header: `Someone want to join.`,
-            cssClass: 'custom-alert',
-            buttons: [
-              {
-                text: 'Decline',
-                role: 'cancel',
-                cssClass: 'alert-button-cancel',
-                handler: () => {
-                  handleDeniJoin(name, socketid);
-                },
-              },
-              {
-                text: 'Approve',
-                role: 'confirm',
-                cssClass: 'alert-button-confirm',
-                handler: () => {
-                  handleApproveJoin(name, socketid)
-                },
-              },
-            ],
-          })
-        }
-      }
+    socket.current.on("request_join_room", (name) => {
+      setRequester(name);
+      setRequested(true);
     });
 
     // @ts-ignore
@@ -119,6 +95,34 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
     // eslint-disable-next-line 
   }, [socket.current]);
 
+  useEffect(() => {
+    if (requested && requester) {
+      presentAlert({
+        header: `Someone want to join.`,
+        cssClass: 'custom-alert',
+        buttons: [
+          {
+            text: 'Decline',
+            role: 'cancel',
+            cssClass: 'alert-button-cancel',
+            handler: () => {
+              handleDeniJoin(requester);
+            },
+          },
+          {
+            text: 'Approve',
+            role: 'confirm',
+            cssClass: 'alert-button-confirm',
+            handler: () => {
+              handleApproveJoin(requester)
+            },
+          },
+        ],
+      })
+      setRequested(false);
+    }
+    // eslint-disable-next-line 
+  }, [requested, requester])
 
   useEffect(() => {
     if (kicked) {
@@ -132,7 +136,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
         setKicked(false);
       }
     }
-     // eslint-disable-next-line 
+    // eslint-disable-next-line 
   }, [kicked, kickedRoom])
 
   useEffect(() => {
@@ -147,8 +151,8 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
         setClosedRoom(null);
       }
     }
-     // eslint-disable-next-line 
-  }, [ closed, closedRoom])
+    // eslint-disable-next-line 
+  }, [closed, closedRoom])
 
   useEffect(() => {
     if (gameStarted) {
@@ -162,7 +166,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
         setStartedRoom(null);
       }
     }
-     // eslint-disable-next-line 
+    // eslint-disable-next-line 
   }, [gameStarted, startedRoom])
 
 

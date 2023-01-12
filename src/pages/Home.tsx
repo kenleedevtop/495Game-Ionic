@@ -21,8 +21,11 @@ const Home: React.FC<ContainerProps> = ({ socket, setRoom, setAdmin, id }) => {
   }
 
   const handleExit = () => {
-    //@ts-ignore
-    navigator['app'].exitApp();
+    try {
+      //@ts-ignore
+      navigator['app'].exitApp();
+    } catch (error) {
+    }
   }
 
   const handleShowRoomModal = () => {
