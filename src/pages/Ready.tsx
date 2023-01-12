@@ -25,6 +25,13 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
   const [showAlert, setShowAlert] = useState(false);
   const [presentAlert] = useIonAlert();
   const [presentToast] = useIonToast();
+  const [kickedRoom, setKickedRoom] = useState<any>(null);
+  const [kicked, setKicked] = useState(false);
+  const [closedRoom, setClosedRoom] = useState<any>(null);
+  const [closed, setClosed] = useState(false);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [startedRoom, setStartedRoom] = useState<any>(null);
+  const [readyPlayers, setReadyPlayers] = useState<any>([]);
 
   let sockettime = 0;
 
@@ -75,23 +82,15 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
 
     // @ts-ignore
     socket.current.on("room_closed", (closed) => {
-      if (room === closed) {
-        presentToast({
-          message: `The room ${closed} has been closed by the Admin.`,
-          duration: 3000
-        })
-        handleBack();
-      }
+      setClosed(true);
+      setClosedRoom(closed);
     });
 
     // @ts-ignore
-    socket.current.on("kick_player", (name) => {
+    socket.current.on("kick_player", (name, kickedroom) => {
       if (name === id) {
-        presentToast({
-          message: `You have been kicked by the Admin.`,
-          duration: 3000
-        })
-        handleBack();
+        setKicked(true)
+        setKickedRoom(kickedroom);
       }
     });
 
@@ -106,12 +105,61 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
     });
 
     // @ts-ignore
-    socket.current.on("start_game", (players) => {
-      handleJoin(players);
+    socket.current.on("start_game", (players, room) => {
+      setStarted(true);
+      setGameStarted(true);
+      setStartedRoom(room);
+      setReadyPlayers(players);
     });
     // @ts-ignore
     // eslint-disable-next-line 
   }, [socket.current]);
+
+
+  useEffect(() => {
+    if (kicked) {
+      if (room === kickedRoom) {
+        presentToast({
+          message: `You have been kicked from room "${kickedRoom}" by the Admin.`,
+          duration: 3000
+        })
+        handleBack();
+        setKickedRoom(null);
+        setKicked(false);
+      }
+    }
+     // eslint-disable-next-line 
+  }, [kicked, kickedRoom])
+
+  useEffect(() => {
+    if (closed) {
+      if (room === closedRoom) {
+        presentToast({
+          message: `The room "${closedRoom}" has been closed by the Admin.`,
+          duration: 3000
+        })
+        handleBack();
+        setClosed(false);
+        setClosedRoom(null);
+      }
+    }
+     // eslint-disable-next-line 
+  }, [ closed, closedRoom])
+
+  useEffect(() => {
+    if (gameStarted) {
+      if (room === startedRoom) {
+        presentToast({
+          message: `The game in the room "${startedRoom}" has been started`,
+          duration: 3000
+        })
+        handleJoin(readyPlayers);
+        setGameStarted(false);
+        setStartedRoom(null);
+      }
+    }
+     // eslint-disable-next-line 
+  }, [gameStarted, startedRoom])
 
 
 
@@ -127,21 +175,16 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
   const handleJoin = (newplayers: any) => {
     const me = newplayers.filter((player: any) => player.id === id);
     if (me.length > 0) {
-      socket.current.emit('join_game', { room, id });
+      socket.current.emit('join_game_first', { room, id });
       setReady(false);
       history.push('/game')
     }
   }
 
   const handleStart1 = () => {
-    const readyplayer = players.filter((player: any) => player.nickname.length > 0)
-    if (readyplayer.length >= 2) {
-      socket.current.emit('join_game', { room });
-      setReady(false);
-      history.push('/game')
-    } else {
-      setShowAlert(true);
-    }
+    socket.current.emit('join_game', { room, id });
+    setReady(false);
+    history.push('/game')
   }
 
 

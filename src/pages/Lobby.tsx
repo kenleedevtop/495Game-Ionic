@@ -19,40 +19,8 @@ const Lobby: React.FC<ContainerProps> = ({ socket, id, setRoom, room }) => {
   const [roomNames, setRoomNames] = useState<string[]>([])
   const [showLoading, setShowLoading] = useState(false);
   const [presentToast] = useIonToast();
-
-  useEffect(() => {
-    // @ts-ignore
-    socket.current.on("response_join_room_fail", (message) => {
-      presentToast({
-        message: message,
-        duration: 3000
-      })
-    });
-    // @ts-ignore
-    socket.current.on("response_join_room", (newroom, name, approve) => {
-      if (name === id) {
-       
-        if (approve) {
-          presentToast({
-            message: "The Admin has Approved your request.",
-            duration: 3000
-          })
-          socket.current.emit('join_room', { room: newroom, name: id, member: 8 });
-          history.push("/ready")
-          setShowLoading(false);
-        } else {
-          presentToast({
-            message: "The Admin has Declined your request.",
-            duration: 3000
-          })
-          setShowLoading(false);
-        }
-        
-      }
-    });
-    socket.current.emit('join_lobby');
-    // eslint-disable-next-line
-  }, [])
+  const [approvedRoom, setApprovedRoom] = useState<any>(null)
+  const [approved, setApproved] = useState(false);
 
   useEffect(() => {
     // @ts-ignore
@@ -69,23 +37,84 @@ const Lobby: React.FC<ContainerProps> = ({ socket, id, setRoom, room }) => {
       setRooms(roms);
       setRoomNames(romnames);
     });
+
+    // @ts-ignore
+    socket.current.on("response_join_room_fail", (message) => {
+      presentToast({
+        message: message,
+        duration: 3000
+      })
+    });
+    // @ts-ignore
+    socket.current.on("response_join_room", (newroom, name, approve) => {
+      if (name === id) {
+        if (approve) {
+          setApprovedRoom(newroom);
+          setApproved(true);
+        } else {
+          setApprovedRoom(newroom);
+          setApproved(false);
+        }
+      }
+    });
+
     // @ts-ignore
     // eslint-disable-next-line
   }, [socket.current]);
 
+  useEffect(() => {
+    socket.current.emit('join_lobby');
+    // eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    if (showLoading) {
+      if (approved) {
+        if (room === approvedRoom) {
+          presentToast({
+            message: `The Admin of room "${approvedRoom}" has approved your join request.`,
+            duration: 3000
+          })
+          joinRoom(approvedRoom)
+          setApproved(false);
+          setApprovedRoom(null);
+          setShowLoading(false);
+        }
+      } else {
+        if (room === approvedRoom) {
+          presentToast({
+            message: `The Admin of room "${approvedRoom}" has declined your join request.`,
+            duration: 3000
+          })
+          setApprovedRoom(null);
+          setShowLoading(false);
+        }
+      }
+    } else {
+      setApproved(false);
+      setApprovedRoom(null);
+      setShowLoading(false);
+    }
+    // eslint-disable-next-line 
+  }, [approvedRoom, approved])
+
+
+
+  const joinRoom = (newroom: any) => {
+    socket.current.emit('join_room', { room: newroom, name: id, member: 8 });
+    history.push("/ready")
+  }
+
   const handleJoin = () => {
     setShowLoading(true);
-    setTimeout(() => {
-      setShowLoading(false);
-      if (showLoading) {
-        presentToast({
-          message: `The Admin does not respond to the join request. \n Please try again later.`,
-          duration: 3000
-        })
-      }
-    }, 10000);
     socket.current.emit('request_join_room', { room, name: id });
-    // history.push("/ready")
+    setTimeout(() => {
+        setShowLoading(false);
+        // presentToast({
+        //   message: `The Admin does not respond to the join request. \n Please try again later.`,
+        //   duration: 3000
+        // })
+    }, 10000);
   }
 
   const handleBack = () => {
@@ -95,7 +124,6 @@ const Lobby: React.FC<ContainerProps> = ({ socket, id, setRoom, room }) => {
   const handleSelectRoom = (room: any) => {
     setRoom(room);
   }
-
   return (
     <IonPage className='lobbyPage'>
       <IonContent >
