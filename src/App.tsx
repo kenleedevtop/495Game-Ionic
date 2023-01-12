@@ -41,6 +41,7 @@ const App: React.FC = () => {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
+  const [admin, setAdmin] = useState("");
 
   const socket = useRef();
 
@@ -58,14 +59,18 @@ const App: React.FC = () => {
     <IonApp className="mobileview">
       <IonReactRouter>
         <IonRouterOutlet>
-          <Route path="/home">
+          <Route path="/" exact={true}>
+            <Redirect to="/home" />
+          </Route>
+          <Route path="/home" exact={true}>
             <Home
               socket={socket}
               id={id}
+              setAdmin={setAdmin}
               setRoom={setRoom}
             />
           </Route>
-          <Route path="/lobby">
+          <Route path="/lobby" exact={true}>
             <Lobby
               id={id}
               name={name}
@@ -75,17 +80,18 @@ const App: React.FC = () => {
               socket={socket}
             />
           </Route>
-          <Route path="/ready">
+          <Route path="/ready" exact={true}>
             <Ready
               id={id}
               name={name}
               setName={setName}
               room={room}
+              admin={admin}
               setRoom={setRoom}
               socket={socket}
             />
           </Route>
-          <Route path="/game">
+          <Route path="/game" exact={true}>
             <Game
               id={id}
               name={name}
@@ -94,7 +100,7 @@ const App: React.FC = () => {
               setRoom={setRoom}
               socket={socket} />
           </Route>
-          <Route path="/over">
+          <Route path="/over" exact={true}>
             <Over
               id={id}
               name={name}
@@ -104,9 +110,7 @@ const App: React.FC = () => {
               socket={socket}
             />
           </Route>
-          <Route exact path="/">
-            <Redirect to="/home" />
-          </Route>
+
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>

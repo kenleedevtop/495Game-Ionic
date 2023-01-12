@@ -1,7 +1,8 @@
-import { IonButton, IonCol, IonContent, IonGrid, IonPage, IonRow } from '@ionic/react';
+import { IonButton, IonCol, IonContent, IonGrid, IonLoading, IonPage, IonRow, useIonToast } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import './Lobby.scss';
+import './Lobby.css';
 
 interface ContainerProps {
   socket: any;
@@ -12,24 +13,55 @@ interface ContainerProps {
   setRoom: any;
 }
 
-const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
+const Lobby: React.FC<ContainerProps> = ({ socket, id, setRoom, room }) => {
   const history = useHistory();
   const [rooms, setRooms] = useState<any[]>([]);
   const [roomNames, setRoomNames] = useState<string[]>([])
+  const [showLoading, setShowLoading] = useState(false);
+  const [presentToast] = useIonToast();
 
   useEffect(() => {
+    // @ts-ignore
+    socket.current.on("response_join_room_fail", (message) => {
+      presentToast({
+        message: message,
+        duration: 3000
+      })
+    });
+    // @ts-ignore
+    socket.current.on("response_join_room", (newroom, name, approve) => {
+      if (name === id) {
+       
+        if (approve) {
+          presentToast({
+            message: "The Admin has Approved your request.",
+            duration: 3000
+          })
+          socket.current.emit('join_room', { room: newroom, name: id, member: 8 });
+          history.push("/ready")
+          setShowLoading(false);
+        } else {
+          presentToast({
+            message: "The Admin has Declined your request.",
+            duration: 3000
+          })
+          setShowLoading(false);
+        }
+        
+      }
+    });
     socket.current.emit('join_lobby');
     // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
-     // @ts-ignore
+    // @ts-ignore
     socket.current.on("room_list", (room_list) => {
       const roms: any = []
       const romnames: any = [];
-      Object.keys(room_list).forEach(function(key, index) {
+      Object.keys(room_list).forEach(function (key, index) {
         const currentroom = room_list[key]
-        if (currentroom['maxMembers'] > currentroom['currentMembers']) {
+        if (currentroom['maxMembers'] > currentroom['currentMembers'] && currentroom['start'] === false) {
           roms.push(room_list[key]);
           romnames.push(key);
         }
@@ -42,8 +74,18 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
   }, [socket.current]);
 
   const handleJoin = () => {
-    socket.current.emit('join_room', { room, name: id, member: 8 });
-    history.push("/ready")
+    setShowLoading(true);
+    setTimeout(() => {
+      setShowLoading(false);
+      if (showLoading) {
+        presentToast({
+          message: `The Admin does not respond to the join request. \n Please try again later.`,
+          duration: 3000
+        })
+      }
+    }, 10000);
+    socket.current.emit('request_join_room', { room, name: id });
+    // history.push("/ready")
   }
 
   const handleBack = () => {
@@ -105,6 +147,13 @@ const Lobby: React.FC<ContainerProps> = ({socket, id, setRoom, room}) => {
             </div>
           </div>
         </IonRow>
+        <IonLoading
+          cssClass='custom-loading'
+          isOpen={showLoading}
+          spinner='bubbles'
+          onDidDismiss={() => setShowLoading(false)}
+          message={'Please wait for the admin to approve it'}
+        />
       </IonContent>
     </IonPage>
   );

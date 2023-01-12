@@ -1,16 +1,17 @@
-ion-modal#create-user-modal {
+ion-modal#create-score-modal {
     --width: fit-content;
-    --max-width: 400px;
+    --max-width: 500px;
     --height: fit-content;
     --border-radius: 6px;
+    --background-color: black;
     --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
 }
 
-ion-modal#create-user-modal h1 {
+ion-modal#create-score-modal h1 {
     margin: 0px 20px 0px 20px;
 }
 
-ion-modal#create-user-modal ion-icon {
+ion-modal#create-score-modal ion-icon {
     margin-right: 6px;
 
     width: 48px;
@@ -21,13 +22,13 @@ ion-modal#create-user-modal ion-icon {
     color: #aaaaaa;
 }
 
-ion-modal#create-user-modal .artwrapper {
+ion-modal#create-score-modal .artwrapper {
     margin: 10px;
 }
 
-.userwrapper {
-   padding: 15px;
-    justify-content: center;
+.scorewrapper {
+//    padding: 15px;
+    // justify-content: center;
     background-color: #212121;
 
     h1 {
@@ -43,9 +44,10 @@ ion-modal#create-user-modal .artwrapper {
     h2 {
         font-family: Montserrat;
         font-weight: 100;
+        margin: 0px;
+        padding-bottom: 10px;
         font-size: 17px;
-        margin: 15px;
-        text-align: center;
+        text-align: left;
         color: #f1f1f1ba;
     }
 

@@ -7,10 +7,11 @@ import './Home.scss';
 interface ContainerProps {
   socket: any;
   setRoom: any;
-  id: any
+  id: any;
+  setAdmin: any;
 }
 
-const Home: React.FC<ContainerProps> = ({socket, setRoom, id}) => {
+const Home: React.FC<ContainerProps> = ({socket, setRoom, setAdmin, id}) => {
   const [showRoomModal, setShowRoomModal] = useState<boolean>(false);
   const history = useHistory();
 
@@ -54,6 +55,7 @@ const Home: React.FC<ContainerProps> = ({socket, setRoom, id}) => {
         showModal={showRoomModal}
         socket={socket}
         setRoom={setRoom}
+        setAdmin={setAdmin}
         id={id}
         dismiss={handleHideRoomModal}
       />
