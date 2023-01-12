@@ -56,16 +56,19 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =>
     // @ts-ignore
     socket.current.on("player_debts", (debts) => {
       const myDebt = debts.filter((item: any) => item.id === id);
-      if (myDebt.length > 0) {
-        setValue(myDebt[0].debt);
-        let strValue = myDebt[0].debt.toString();
-        strValue = strValue.replace(/0/g, 'O');
-        strValue = strValue.replace(/1/g, 'l');
-        setRealValue(strValue);
-        setPlayerDebts(debts);
-        if (myDebt[0].debt <= 0) {
-          setSuccessed(true);
+      try {
+        if (myDebt.length > 0) {
+          setValue(myDebt[0].debt);
+          let strValue = myDebt[0].debt.toString();
+          strValue = strValue.replace(/0/g, 'O');
+          strValue = strValue.replace(/1/g, 'l');
+          setRealValue(strValue);
+          setPlayerDebts(debts);
+          if (myDebt[0].debt <= 0) {
+            setSuccessed(true);
+          }
         }
+      } catch (error) {
       }
     });
 
@@ -170,8 +173,8 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =>
       })
     });
 
-     // @ts-ignore
-     socket.current.on("edit-score", (ids, amount, players) => {
+    // @ts-ignore
+    socket.current.on("edit-score", (ids, amount, players) => {
       presentToast({
         message: `Admin changed scores`,
         duration: 3000
@@ -221,13 +224,14 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =>
       subValue = 0;
     }
     socket.current.emit("forgive_self", { id, room, amount: sum, debt: subValue });
-    socket.current.emit("turn_over", { room });
+    socket.current.emit("turn_over", { room, players });
   }
 
 
   const handleReduceTransgress = () => {
     if (selectedPlayers.length > 0) {
-      const sum = parseInt(roll) * parseInt(factor);
+      const count = selectedPlayers.length;
+      const sum = Math.floor(parseInt(roll) * parseInt(factor) / count);
       const debts = selectedPlayers.map((player) => {
         const othervalue: any = playerDebts.filter((item: any) => item.id === player)
         let subValue = othervalue[0].debt - sum;
@@ -237,7 +241,7 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =>
         return subValue;
       })
       socket.current.emit("forgive", { from: id, ids: selectedPlayers, room, amount: sum, debts });
-      socket.current.emit("turn_over", { room });
+      socket.current.emit("turn_over", { room, players });
       // if (subValue === 0) {
       //   socket.current.emit('success_game', { name: id, room });
       //   history.push('/over')
@@ -249,14 +253,15 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =>
 
   const handleAddTransgress = () => {
     if (selectedPlayers.length > 0) {
-      const sum = parseInt(roll) * parseInt(factor);
+      const count = selectedPlayers.length;
+      const sum = Math.floor(parseInt(roll) * parseInt(factor) / count);
       const debts = selectedPlayers.map((player) => {
         const othervalue: any = playerDebts.filter((item: any) => item.id === player)
         let subValue = othervalue[0].debt + sum;
         return subValue;
       })
       socket.current.emit("transgress", { from: id, ids: selectedPlayers, room, amount: sum, debts });
-      socket.current.emit("turn_over", { room });
+      socket.current.emit("turn_over", { room, players });
     } else {
       setShowAlert(true)
     }

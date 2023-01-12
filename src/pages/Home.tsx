@@ -11,7 +11,7 @@ interface ContainerProps {
   setAdmin: any;
 }
 
-const Home: React.FC<ContainerProps> = ({socket, setRoom, setAdmin, id}) => {
+const Home: React.FC<ContainerProps> = ({ socket, setRoom, setAdmin, id }) => {
   const [showRoomModal, setShowRoomModal] = useState<boolean>(false);
   const history = useHistory();
 
@@ -21,7 +21,8 @@ const Home: React.FC<ContainerProps> = ({socket, setRoom, setAdmin, id}) => {
   }
 
   const handleExit = () => {
-
+    //@ts-ignore
+    navigator['app'].exitApp();
   }
 
   const handleShowRoomModal = () => {

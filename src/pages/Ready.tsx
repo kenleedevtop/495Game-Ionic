@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import TextInput from '../components/NameInput';
 import './Ready.scss';
+import './Lobby.css'
 
 interface ContainerProps {
   socket: any;
@@ -53,11 +54,13 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
         sockettime ++;
         if (sockettime === 1) {
           presentAlert({
-            header: `Someone has requested to join this room.`,
+            header: `Someone want to join.`,
+            cssClass: 'custom-alert',
             buttons: [
               {
                 text: 'Decline',
                 role: 'cancel',
+                cssClass: 'alert-button-cancel',
                 handler: () => {
                   handleDeniJoin(name, socketid);
                 },
@@ -65,6 +68,7 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
               {
                 text: 'Approve',
                 role: 'confirm',
+                cssClass: 'alert-button-confirm',
                 handler: () => {
                   handleApproveJoin(name, socketid)
                 },
