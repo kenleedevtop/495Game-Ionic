@@ -7,7 +7,6 @@ import {
 
 import './EditScoreModal.scss';
 import Input from './ScoreInput';
-import { useHistory } from 'react-router';
 
 interface ContainerProps {
     showModal: boolean;

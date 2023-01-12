@@ -114,7 +114,7 @@ const Lobby: React.FC<ContainerProps> = ({ socket, id, setRoom, room }) => {
         //   message: `The Admin does not respond to the join request. \n Please try again later.`,
         //   duration: 3000
         // })
-    }, 10000);
+    }, 20000);
   }
 
   const handleBack = () => {
