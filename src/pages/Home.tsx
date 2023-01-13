@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonPage, IonRow } from '@ionic/react';
+import { IonButton, IonContent, IonPage, IonRow, useIonAlert } from '@ionic/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import CreateRoomModal from '../components/CreateRoomModal';
@@ -14,6 +14,7 @@ interface ContainerProps {
 const Home: React.FC<ContainerProps> = ({ socket, setRoom, setAdmin, id }) => {
   const [showRoomModal, setShowRoomModal] = useState<boolean>(false);
   const history = useHistory();
+  const [presentAlert] = useIonAlert();
 
   const handleLobby = () => {
     socket.current.emit('join_lobby');
@@ -26,6 +27,28 @@ const Home: React.FC<ContainerProps> = ({ socket, setRoom, setAdmin, id }) => {
       navigator['app'].exitApp();
     } catch (error) {
     }
+  }
+
+  const handleExitClick = () => {
+    presentAlert({
+      header: `Are you sure?`,
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'alert-button-cancel',
+        },
+        {
+          text: 'Yes',
+          role: 'confirm',
+          cssClass: 'alert-button-confirm',
+          handler: () => {
+            handleExit()
+          },
+        },
+      ],
+    })
   }
 
   const handleShowRoomModal = () => {
@@ -50,7 +73,7 @@ const Home: React.FC<ContainerProps> = ({ socket, setRoom, setAdmin, id }) => {
             <div className='button-container'>
               <IonButton className='color2' onClick={handleShowRoomModal}><p>NEW</p></IonButton>
               <IonButton className='color2' onClick={handleLobby}><p>LOBBY</p></IonButton>
-              <IonButton className='color3' onClick={handleExit}><p>QUIT</p></IonButton>
+              <IonButton className='color3' onClick={handleExitClick}><p>QUIT</p></IonButton>
             </div>
           </div>
         </IonRow>

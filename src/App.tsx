@@ -1,4 +1,5 @@
 import { Redirect, Route } from 'react-router-dom';
+import { StatusBar } from '@capacitor/status-bar';
 import {
   IonApp,
   IonRouterOutlet,
@@ -43,6 +44,7 @@ const App: React.FC = () => {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
   const [admin, setAdmin] = useState("");
+  const [totalTurn, setTotalTurn] = useState(0)
 
   const socket = useRef();
 
@@ -55,6 +57,17 @@ const App: React.FC = () => {
     const ramdomid = makeRandom();
     setId(ramdomid);
   }, [socket]);
+
+  const hideStatusBar = async() => {
+    try {
+      await StatusBar.hide();
+    } catch (error) {
+    }
+  }
+  
+  useEffect(() => {
+    hideStatusBar();
+  }, [])
 
   return (
     <IonApp className="mobileview">
@@ -100,7 +113,9 @@ const App: React.FC = () => {
               room={room}
               setRoom={setRoom}
               admin={admin}
-              socket={socket} />
+              socket={socket} 
+              setTotalTurn={setTotalTurn}
+              />
           </Route>
           <Route path="/over" exact={true}>
             <Over
@@ -110,6 +125,7 @@ const App: React.FC = () => {
               room={room}
               setRoom={setRoom}
               socket={socket}
+              totalTurn={totalTurn}
             />
           </Route>
 

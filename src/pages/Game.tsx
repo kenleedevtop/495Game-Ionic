@@ -13,9 +13,10 @@ interface ContainerProps {
   room: any;
   admin: any;
   setRoom: any;
+  setTotalTurn: any;
 }
 
-const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) => {
+const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, setTotalTurn, admin }) => {
   const [roll, setRoll] = useState<any>(0);
   const [factor, setFactor] = useState<any>(0);
   const [selectedPlayers, setSelectPlayers] = useState<any[]>([]);
@@ -28,6 +29,7 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =>
   const [playerDebts, setPlayerDebts] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("");
   const [myTurn, setMyTurn] = useState(false);
+  const [turncount, setTurnCount] = useState<number>(0);
 
   const [endGame, setEndGame] = useState(true);
   const [endGameRoom, setEndGameRoom] = useState<any>(null);
@@ -45,6 +47,22 @@ const Game: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =>
   const handleHideRoomModal = () => {
     setShowRoomModal(false);
   }
+
+
+  useEffect(() => {
+    setTotalTurn(0);
+    setTurnCount(0);
+    // eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    if (myTurn) {
+      const turn = turncount + 1;
+      setTurnCount(turn);
+      setTotalTurn(turn);
+    }
+    // eslint-disable-next-line
+  }, [myTurn])
 
 
   useEffect(() => {
