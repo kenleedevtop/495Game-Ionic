@@ -1,5 +1,5 @@
-import { IonButton, IonContent, IonPage, IonRow, useIonAlert } from '@ionic/react';
-import { useState } from 'react';
+import { IonButton, IonContent, IonPage, IonRow, useIonAlert, useIonToast } from '@ionic/react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import CreateRoomModal from '../components/CreateRoomModal';
 import './Home.scss';
@@ -15,6 +15,7 @@ const Home: React.FC<ContainerProps> = ({ socket, setRoom, setAdmin, id }) => {
   const [showRoomModal, setShowRoomModal] = useState<boolean>(false);
   const history = useHistory();
   const [presentAlert] = useIonAlert();
+  const [presentToast] = useIonToast();
 
   const handleLobby = () => {
     socket.current.emit('join_lobby');
@@ -58,6 +59,23 @@ const Home: React.FC<ContainerProps> = ({ socket, setRoom, setAdmin, id }) => {
   const handleHideRoomModal = () => {
     setShowRoomModal(false);
   }
+
+  useEffect(() => {
+    // @ts-ignore
+    socket.current.on("create_room", (newroom, approve) => {
+      if (approve) {
+       history.push('/ready')
+      } else {
+        presentToast({
+          message: `The room "${newroom}" already exists. Please use another name`,
+          duration: 3000
+        })
+      }
+    });
+
+    // @ts-ignore
+    // eslint-disable-next-line
+  }, [socket.current]);
 
   return (
     <IonPage className='homePage'>

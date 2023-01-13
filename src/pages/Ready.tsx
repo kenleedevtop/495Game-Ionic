@@ -13,9 +13,10 @@ interface ContainerProps {
   room: any;
   setRoom: any;
   admin: any;
+  setAdmin: any;
 }
 
-const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) => {
+const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom,setAdmin, admin }) => {
   const history = useHistory();
   const [nickname, setNickName] = useState<string>("");
   // eslint-disable-next-line
@@ -77,6 +78,10 @@ const Ready: React.FC<ContainerProps> = ({ socket, id, room, setRoom, admin }) =
     // @ts-ignore
     socket.current.on("room_state", (started) => {
       setStarted(started);
+    });
+    // @ts-ignore
+    socket.current.on("room_owner", (owner) => {
+      setAdmin(owner);
     });
 
     // @ts-ignore

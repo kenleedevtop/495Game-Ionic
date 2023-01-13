@@ -5,7 +5,7 @@ import {
 
 import './CreateRoomModal.scss';
 import Input from './TextInput';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
 
 interface ContainerProps {
     showModal: boolean;
@@ -19,7 +19,7 @@ interface ContainerProps {
 const CreateRoomModal: React.FC<ContainerProps> = ({ showModal, dismiss, socket, setAdmin, setRoom, id }) => {
     const [roomname, setRoomName] = useState<string>("")
     const [members, setMembers] = useState<number>(2);
-    const history = useHistory();
+    // const history = useHistory();
     const handleContinue = () => {
         dismiss();
     }
@@ -41,9 +41,9 @@ const CreateRoomModal: React.FC<ContainerProps> = ({ showModal, dismiss, socket,
     const handleCreateRoom = async () => {
         if (members && roomname) {
             setRoom(roomname)
-            socket.current.emit('join_room', { room: roomname, name: id, members });
-            setAdmin(id);
-            history.push("/ready")
+            socket.current.emit('create_room', { room: roomname, name: id, members });
+            // setAdmin(id);
+            // history.push("/ready")
             dismiss();
         } else {
 
